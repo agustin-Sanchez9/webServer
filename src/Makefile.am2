@@ -1,0 +1,40 @@
+#noinst_LTLIBRARIES = libapp1.la libapp2.la libapp3.la
+AM_CPPFLAGS = -I$(top_builddir)/include
+bin_PROGRAMS = ../wserver/server1 ../wserver/server2 ../wserver/prueba_cgi ../cgi-bin/cgi1.cgi
+
+#lib_LTLIBRARIES = libapp1.la libapp2.la libapp3.la
+#libapp1_la_SOURCES = app1.c bdb.c cgi.c util.c $(top_builddir)/include/util.h \
+#			$(top_builddir)/include/bdb.h $(top_builddir)/include/cgi.h 
+#libapp1_la_CPPFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp1.so -lc -ldb
+#libapp1_la_CFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp1.so -lc -ldb
+#libapp1_la_CXXFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp1.so -lc -ldb
+#libapp1_la_LDFLAGS = -module -version-info 0:0:0 -shared -fPIC
+
+#libapp2_la_SOURCES = app2.c bdb.c cgi.c util.c $(top_builddir)/include/util.h \
+#			$(top_builddir)/include/bdb.h $(top_builddir)/include/cgi.h 
+#libapp2_la_CPPFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp2.so -lc -ldb
+#libapp2_la_CFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp2.so -lc -ldb
+#libapp2_la_CXXFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp2.so -lc -ldb
+#libapp2_la_LDFLAGS = -module -version-info 0:0:0 -shared -fPIC
+
+#libapp3_la_SOURCES = app3.c cgi.c util.c $(top_builddir)/include/util.h \
+#			$(top_builddir)/include/bdb.h $(top_builddir)/include/cgi.h 
+#libapp3_la_CPPFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp3.so -lc -ldb
+#libapp3_la_CFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp3.so -lc -ldb
+#libapp3_la_CXXFLAGS = -Wall -I$(top_builddir)/include -fPIC -shared  -Wl,-soname,libapp3.so -lc -ldb
+#libapp3_la_LDFLAGS = -module -version-info 0:0:0 -shared -fPIC
+
+___wserver_server1_SOURCES = server1.c util.c $(top_builddir)/include/util.h
+___wserver_server1_CPPFLAGS = -Wall -I$(top_builddir)/include
+
+___wserver_server2_SOURCES = server2.c util.c $(top_builddir)/include/util.h
+___wserver_server2_CPPFLAGS = -Wall -I$(top_builddir)/include -lpthread -ldl
+#___wserver_server2_DEPENDENCIES = libapp1.la libapp2.la libapp3.la
+#___wserver_server2_LDADD = libapp1.la libapp2.la libapp3.la
+
+___wserver_prueba_cgi_SOURCES = prueba_cgi.c
+___wserver_prueba_cgi_CPPFLAGS = -Wall
+
+___cgi_bin_cgi1_cgi_SOURCES = cgi1.c cgi.c $(top_builddir)/include/cgi.h
+___cgi_bin_cgi1_cgi_CPPFLAGS = -Wall -I$(top_builddir)/include
+

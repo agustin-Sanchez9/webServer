@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>grchere web server 1.0</title>
+    <script src="lib/jquery/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<p>Hola Mundo! desde mi webserver!</p>
+<a href="grclogo.gif">Logo 1</a>
+<a href="grclogo.jpg">Logo 2</a>
+<a href="pepe.html?a=hola mundo&b=que se yo!">Index con parametros get con espacios</a>
+<p>Formulario metodo POST</p>
+<form id="frm" action="cgi1.cgi" method="post">
+  <label for="nombre">Nombre:</label>
+  <input type="text" id="nombre" name="nombre" value="Juan"><br>
+  <label for="apellido">Apellido:</label>
+  <input type="text" id="apellido" name="apellido" value="Perez"><br><br>
+  <input type="submit" value="Enviar">	
+</form>
+<p>Formulario metodo GET</p>
+<form id="frm2" action="cgi1.cgi" method="get">
+  <label for="nombre">Nombre:</label>
+  <input type="text" id="nombre" name="nombre" value="Juan"><br>
+  <label for="apellido">Apellido:</label>
+  <input type="text" id="apellido" name="apellido" value="Perez"><br><br>
+  <input type="submit" value="Enviar">	
+</form>
+<p>------------------------------------------</p>
+<p>Pruebo AJAX</p>
+<div>
+	<button name="miboton" id="miboton">Ejecuto CGI POST con jquery 3.7</button>
+</div>
+<div>
+	<button name="miboton1" id="miboton1">Ejecuto CGI GET con jquery 3.7</button>
+</div>
+<div>
+	<button name="miboton2" id="miboton2" onclick="loadDoc()">Ejecuto CGI GET con XMLHttpRequest</button>
+</div>
+<div>
+	<button name="miboton4" id="miboton4" onclick="loadDoc2()">Ejecuto CGI POST con XMLHttpRequest</button>
+</div>
+<div>
+	<button name="miboton3" id="miboton3" onclick="borrar()">Borro Resultado</button>
+</div>
+<p>------------------------------------------</p>
+<p>SOLO PARA SERVIDOR WEB version 2, con hilos y app dinamicas. APP 1</p>
+<p>Datos de Cliente:</p>
+<form id="frm3">
+  <label for="descr">Nombre:</label>
+  <input type="text" id="descr" name="descr" value="Perez, Juan"><br>
+  <label for="saldo">Saldo:</label>
+  <input type="text" id="saldo" name="saldo" value="0.0"><br>
+</form>
+<div>
+	<button name="miboton5" id="miboton5">app1 Insertar</button>
+</div>
+<div>
+	<button name="miboton6" id="miboton6">app1 Listar</button>
+</div>
+<p>------------------------------------------</p>
+<p>SOLO PARA SERVIDOR WEB version 2, con hilos y app dinamicas. APP 2</p>
+<p>Login:</p>
+<form id="frm4">
+  <label for="usuario">Usuario:</label>
+  <input type="text" id="usuario" name="usuario" value="jromer"><br>
+  <label for="clave">Clave:</label>
+  <input type="password" id="clave" name="clave"><br>
+</form>
+<div>
+	<button name="miboton7" id="miboton7">app2 Login</button>
+</div>
+<div>
+	<button name="miboton8" id="miboton8">app2 Logoff</button>
+</div>
+<div>
+	<button name="miboton9" id="miboton9">app2 Listar</button>
+</div>
+<p>------------------------------------------</p>
+<p>SOLO PARA SERVIDOR WEB version 2, con hilos y app dinamicas. APP 3</p>
+<p>ATENCION!!! ACEPTA CUALQUIER COMANDO LINUX QUE EMITA UNA SALIDA</p>
+<p>EL COMANDO CORRE CON LOS PRIVILEGIOS DEL USUARIO QUE EJECUTA EL SERVIDOR WEB</p>
+<p>MUCHO CUIDADO, PUEDE DA&Ntilde;AR SU INSTALACION O PERDER DATOS</p>
+<form id="frm5">
+  <label for="comando">Comando Linux:</label>
+  <input type="text" id="comando" name="comando" value="ls -l" maxlength=100><br>
+</form>
+<div>
+	<button name="miboton10" id="miboton10">app3 Ejecutar Comando!</button>
+</div>
+<p>------------------RESULTADOS------------------------</p>
+<div id="resultado">
+</div>
+<script>
+/*******Testing si jquery fue cargado
+window.onload = function() {
+    if (window.jQuery) {  
+        // jQuery is loaded  
+        alert("JQuery cargado Ok!");
+    } else {
+        // jQuery is not loaded
+        alert("JQuery no cargado!");
+    }
+}
+************************************/	
+$("#miboton").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "cgi1.cgi",
+        dataType: "html",
+        data: { 
+            nombre: "enviado con boton",
+            apellido: "no se" 
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton1").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "GET",
+        url: "cgi1.cgi",
+        dataType: "html",
+        data: { 
+            nombre: "Juana",
+            apellido: "De Arco" 
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton5").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app1.insertar", // app1 procesa app1.*
+        dataType: "html",
+        data: { 
+            descr: $("#descr").val(),
+            saldo: $("#saldo").val() 
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton6").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app1.listar", // app1 procesa app1.*
+        dataType: "html",
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+let sesion = '';
+$("#miboton7").click(function(e) { // Login
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app2.login", // app2 procesa app2.*
+        dataType: "html",
+        data: { 
+            usuario: $("#usuario").val(),
+            clave: $("#clave").val() 
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+            sesion = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton8").click(function(e) { // Logoff
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app2.logoff", // app2 procesa app2.*
+        dataType: "html",
+        data: { 
+            session: sesion
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+            sesion = '';
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton9").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app2.listar", // app2 procesa app2.*
+        dataType: "html",
+        data: { 
+            session: sesion
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+$("#miboton10").click(function(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: "/app3.listar", // app3 procesa app3.*
+        dataType: "html",
+        data: { 
+            comando: $("#comando").val()
+        },
+        success: function(result) {
+            document.getElementById("resultado").innerHTML = result;
+        },
+        error: function(result) {
+            alert('Envio con Error!');
+        }
+    });
+});
+
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("resultado").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("GET", "cgi1.cgi?nombre=Pepito&apellido=Flores", true);
+  xhttp.send();
+}
+
+function loadDoc2() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("resultado").innerHTML = this.responseText;
+    }
+  };
+  xhttp.open("POST", "cgi1.cgi", true);
+  var params = "nombre=Pepito&apellido=Flores";
+  xhttp.send(params);
+}
+
+function borrar() {
+	document.getElementById("resultado").innerHTML = '';
+}
+
+</script>
+</body>
+</html>
