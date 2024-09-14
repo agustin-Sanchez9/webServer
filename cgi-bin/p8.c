@@ -5,17 +5,24 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// se utilizara la variable de entorno QUERY_STRING para la obtencion de los datos para los comandos
+// y se manipularan para que el servidor pueda ejecutarlos
+// se separaran los argumentos con "%20", un espacio en hexa, esto para no usar caracteres que puedan
+// conformar parte de un comando como pueden ser el "-" o el "+", etc.
+
 int obtenerQueryString(char *destino, int largo);
 void decodeQueyString(char *str);
 
 int main() {
     char comando[256];
 
+    // obtengo el comando
     if (!obtenerQueryString(comando, sizeof(comando))) {
         fprintf(stderr, "no fue posible obtener el query string\n");
         return 1;
     }
 
+    // reemplazo "%20" por " "
     decodeQueyString(comando);
 
     printf("Content-Type: text/html\r\n\r\n");
@@ -64,7 +71,8 @@ int main() {
         close(pipefd[0]);
         dup2(pipefd[1], STDOUT_FILENO);
         execvp(args[0], args);
-        _exit(1);
+        // si execvp falla continuara con el exit asi aseguro que no quede un huerfano o zombie.
+        exit(1); 
     } else {
         close(pipefd[1]);
         printf("<p></p>"); // para dejar espacio
@@ -79,30 +87,37 @@ int main() {
     return 0;
 }
 
-
-int obtenerQueryString(char *destino, int len) {
-    const char *queryString = getenv("QUERY_STRING");
-    if (queryString == NULL)
-        return 0;
-    if (strlen(queryString) >= len)
-        return 0;
-    strcpy(destino, queryString);
-    return 1;
+// obtener la cadena de consulta QUERY_STRING. return 1 indica exito y 0 indica error o fracaso de operacion
+int obtenerQueryString(char *buffer, int len) {
+    // si se recibe "http://ejemplo.com/p8.cgi?ps%20-lax" entonces QUERY_STRING es "ps%20-lax"
+    // y lo obtengo con getenv
+    char *queryString = getenv("QUERY_STRING");
+    // no se obtuvo nada
+    if (queryString == NULL) 
+        return 0;  
+    // lo botenido supera el tamaño del buffer
+    if (strlen(queryString) >= len) 
+        return 0; 
+    // se copia la cadena al buffer. Se sabe que no desborda el buffer por el chequeo anterior
+    strcpy(buffer, queryString); 
+    return 1; 
 }
 
+
+// necesario para decodificar el caracter "%20" en hexa a un espacio en ascii
 void decodeQueyString(char *string) {
-    char *src = string;
-    char *dst = string;
-    while (*src) {
-        if (src[0] == '%') {
+    char *original = string;
+    char *decoded = string;
+    while (*original) {
+        if (original[0] == '%') {
             int value;
-            sscanf(src + 1, "%2x", &value);
-            *dst++ = (char)value;
-            src += 3;
+            sscanf(original + 1, "%2x", &value);
+            *decoded++ = (char)value;
+            original += 3; // incremento 3 posiciones por el % y el numero hexa
         } else {
-            *dst++ = *src++;
+            *decoded++ = *original++; // si no es hexa se copia tal como esta y se avanza ambos punteros
         }
     }
-    *dst = '\0';
+    *decoded = '\0'; // marco final de cadena
 }
 
